@@ -1,6 +1,5 @@
+<%@ page import="java.sql.*, util.Conexion" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List" %>
-<%@ page import="model.Itemcarrito" %>
 
 <html>
     <head>
@@ -60,37 +59,67 @@
                         </nav>
                         <h1>Mi Carrito</h1>
 
-                        <table border="1" class="table table-striped">
-                            <tr>
-                                <th>Producto</th>
-                                <th>Precio</th>
-                                <th>Cantidad</th>
-                                <th>Total</th>
-                            </tr>
 
-                            <%
-                                List<Itemcarrito> items = (List<Itemcarrito>) request.getAttribute("items");
-                                double totalGeneral = 0;
-                                if (items != null) {
-                                    for (Itemcarrito item : items) {
-                                        double total = item.getPrecio() * item.getCantidad();
-                                        totalGeneral += total;
-                            %>
-                            <tr>
-                                <td><%= item.getNombre() %></td>
-                                <td>$<%= item.getPrecio() %></td>
-                                <td><%= item.getCantidad() %></td>
-                                <td>$<%= total %></td>
-                            </tr>
-                            <%      } // fin for
-                                } // fin if
-                            %>
+                        <%
+int usuarioId = 1; 
+double total = 0;
+    
+Connection con = null;
+PreparedStatement ps = null;
+ResultSet rs = null;
 
-                            <tr>
-                                <td colspan="3"><b>Total General</b></td>
-                                <td><b>$<%= totalGeneral %></b></td>
-                            </tr>
+try {
+    con = Conexion.getConexion();
+    String sql = "SELECT c.cantidad, p.nombre, p.precio " +
+                 "FROM carrito c " +
+                 "JOIN productos p ON c.productos_id = p.productos_id " +
+                 "WHERE c.usuario_id = ?";
+    ps = con.prepareStatement(sql);
+    ps.setInt(1, usuarioId);
+    rs = ps.executeQuery();
+                        %>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%
+                                        while(rs.next()) {
+                                            String nombre = rs.getString("nombre");
+                                            double precio = rs.getInt("precio");
+                                            int cantidad = rs.getInt("cantidad");
+                                            double subtotal = precio * cantidad;
+                                            total += subtotal;
+                                %>
+                                <tr>
+                                    <td><%= nombre %></td>
+                                    <td><%= String.format("%,.2f", precio) %></td>
+                                    <td><%= cantidad %></td>
+                                    <td><%= String.format("%,.2f", subtotal) %></td>
+
+
+                                </tr>
+                                <%
+                                        }
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        if(rs != null) rs.close();
+                                        if(ps != null) ps.close();
+                                        if(con != null) con.close();
+                                    }
+                                %>
+                            </tbody>
                         </table>
+
+                        <h3>Total: <%= String.format("%,.2f", total) %></h3>
+
                         <footer class="bg-dark text-light mt-5 p-4">
                             <div class="container">
                                 <div class="row">

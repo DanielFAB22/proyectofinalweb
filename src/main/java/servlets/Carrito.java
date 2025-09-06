@@ -27,7 +27,7 @@ public class Carrito extends HttpServlet {
 
         try (Connection con = Conexion.getConexion()) {
             String sql = "SELECT p.nombre, p.precio, c.cantidad " +
-                         "FROM carrito c JOIN productos p ON c.producto_id = p.id " +
+                         "FROM carrito c JOIN productos p ON c.productos_id = p.id " +
                          "WHERE c.usuario_id=?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, usuarioId);
