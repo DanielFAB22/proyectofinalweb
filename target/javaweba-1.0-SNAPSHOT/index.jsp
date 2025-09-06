@@ -56,7 +56,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="jsp/catalogos/bajos/fender.jsp">FENDER</a></li>
-                    <li><a class="dropdown-item" href="#">IBANEZ</a></li>
+                    <li><a class="dropdown-item" href="jsp/catalogos/bajos/ibanez.jsp">IBANEZ</a></li>
                     <li><a class="dropdown-item" href="jsp/catalogos/bajos/schecter.jsp">SCHECTER</a></li>
 
 
